@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://mailai-backend-usft.onrender.com";
+
 function GoogleLogin({ onLogin }) {
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
@@ -12,10 +16,8 @@ function GoogleLogin({ onLogin }) {
   const checkLogin = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/auth/user",
-        {
-          withCredentials: true
-        }
+        `${API_URL}/auth/user`,
+        { withCredentials: true }
       );
 
       setUser(response.data);
@@ -24,6 +26,8 @@ function GoogleLogin({ onLogin }) {
         onLogin(response.data);
       }
     } catch (error) {
+      console.error("Login check error:", error);
+      console.error("Server response:", error.response);
       setUser(null);
     } finally {
       setChecking(false);
@@ -31,17 +35,15 @@ function GoogleLogin({ onLogin }) {
   };
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/auth/logout",
+        `${API_URL}/auth/logout`,
         {},
-        {
-          withCredentials: true
-        }
+        { withCredentials: true }
       );
 
       setUser(null);
@@ -54,13 +56,14 @@ function GoogleLogin({ onLogin }) {
     }
   };
 
-  if (checking) {
-    return null;
-  }
+  if (checking) return null;
 
   if (!user) {
     return (
-      <button className="google-login-button" onClick={handleLogin}>
+      <button
+        className="google-login-button"
+        onClick={handleLogin}
+      >
         Sign in with Google
       </button>
     );
