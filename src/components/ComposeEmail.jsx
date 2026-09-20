@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+const API_URL = "https://mailai-backend-usft.onrender.com";
 function ComposeEmail({ onClose }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
@@ -20,7 +20,7 @@ function ComposeEmail({ onClose }) {
       setMessage("");
 
       await axios.post(
-        "http://localhost:5000/api/gmail/send",
+        `${API_URL}/api/gmail/send`,
         {
           to,
           subject,
