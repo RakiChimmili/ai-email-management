@@ -42,14 +42,21 @@ router.get("/google/callback", async (req, res) => {
     const { data } = await oauth2.userinfo.get();
 
     req.session.user = {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      picture: data.picture
-    };
+  id: data.id,
+  name: data.name,
+  email: data.email,
+  picture: data.picture
+};
 
-    // Redirect to frontend
-    res.redirect(frontendUrl);
+// Make sure the session is saved before redirecting
+req.session.save((err) => {
+  if (err) {
+    console.error("Session save error:", err);
+    return res.status(500).send("Failed to save login session.");
+  }
+
+  res.redirect(frontendUrl);
+});
 
   } catch (error) {
     console.error("Google login error:", error);
