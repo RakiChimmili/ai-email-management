@@ -8,13 +8,15 @@ import {
 
 const router = express.Router();
 
+const frontendUrl =
+  process.env.FRONTEND_URL || "http://localhost:5173";
+
 // Start Google Login
 router.get("/google", (req, res) => {
   const authUrl = getGoogleAuthUrl();
   res.redirect(authUrl);
 });
 
-// Google OAuth callback
 // Google OAuth callback
 router.get("/google/callback", async (req, res) => {
   try {
@@ -46,7 +48,9 @@ router.get("/google/callback", async (req, res) => {
       picture: data.picture
     };
 
-    res.redirect("http://localhost:5173");
+    // Redirect to frontend
+    res.redirect(frontendUrl);
+
   } catch (error) {
     console.error("Google login error:", error);
     res.status(500).send("Google login failed.");
@@ -83,6 +87,7 @@ router.get("/user", async (req, res) => {
       email: data.email,
       picture: data.picture
     });
+
   } catch (error) {
     console.error("User info error:", error);
 

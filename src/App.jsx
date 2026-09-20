@@ -8,7 +8,7 @@ import StatsCard from "./components/StatsCard";
 import EmailList from "./components/EmailList";
 import EmailDetails from "./components/EmailDetails";
 import LoginPage from "./components/LoginPage";
-
+const API_URL = import.meta.env.VITE_API_URL;
 import "./App.css";
 
 function App() {
