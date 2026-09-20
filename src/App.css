@@ -1,0 +1,1657 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+
+/* Sidebar */
+
+.sidebar {
+  width: 230px;
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 25px 15px;
+  border-right: 1px solid #ddd;
+}
+
+.sidebar h1 {
+  margin-bottom: 35px;
+}
+
+.nav-item {
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: #f0f0f0;
+}
+
+.nav-item.active {
+  background: #e8e8e8;
+  font-weight: bold;
+}
+
+/* Main */
+
+.main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* Header */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  margin-bottom: 5px;
+}
+
+.header p {
+  color: #777;
+}
+
+.compose-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Statistics */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #666;
+}
+
+.card p {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* Email List */
+
+.email-section {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.email {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.email:hover {
+  background: #f5f5f5;
+}
+
+.email p {
+  margin-bottom: 0;
+  color: #666;
+}
+
+.email span {
+  font-size: 14px;
+}
+
+/* Email Details */
+
+.email-details {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.back-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+
+.email-header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 20px;
+}
+
+.email-header h2 {
+  margin-bottom: 15px;
+}
+
+.email-header p {
+  color: #666;
+}
+
+.email-body {
+  padding-top: 25px;
+  line-height: 1.7;
+}
+/* Email Details */
+
+.email-details {
+  padding: 30px;
+}
+
+.back-button {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+
+.email-details-header h2 {
+  margin-bottom: 8px;
+}
+
+.email-sender {
+  color: #666;
+}
+
+.email-body {
+  background: white;
+  padding: 20px;
+  margin-top: 25px;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+
+.ai-overview-section {
+  margin-top: 25px;
+}
+
+.ai-overview-button {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  background: #6c63ff;
+  color: white;
+}
+
+.ai-overview-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-overview-box {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f4f3ff;
+  border-radius: 12px;
+}
+
+.ai-overview-box h3 {
+  margin-top: 0;
+}
+
+.ai-overview-box p {
+  line-height: 1.6;
+}
+
+.ai-error {
+  color: red;
+  margin-top: 15px;
+}
+/* ============================= */
+/* AI EMAIL COMPOSER */
+/* ============================= */
+
+.email-composer {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.email-field,
+.generated-field {
+  margin-bottom: 20px;
+}
+
+.email-field label,
+.generated-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.email-field input,
+.email-field textarea,
+.email-field select,
+.generated-field input,
+.generated-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  outline: none;
+}
+
+.email-field textarea,
+.generated-field textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.email-field input:focus,
+.email-field textarea:focus,
+.email-field select:focus,
+.generated-field input:focus,
+.generated-field textarea:focus {
+  border-color: #6c63ff;
+}
+
+.generate-email-button {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 9px;
+  background: #6c63ff;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.generate-email-button:hover {
+  opacity: 0.9;
+}
+
+.generate-email-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.generated-email {
+  margin-top: 25px;
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.generated-email h3 {
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+.ai-writer {
+  padding: 30px;
+  max-width: 900px;
+}
+
+.ai-writer-header h2 {
+  margin-bottom: 8px;
+}
+
+.ai-writer-header p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.ai-writer-error {
+  color: red;
+  margin-top: 15px;
+}
+/* ============================= */
+/* GENERATED EMAIL PREVIEW */
+/* ============================= */
+
+.generated-email {
+  margin-top: 25px;
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.generated-email-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.generated-email-header h3 {
+  margin: 0;
+}
+
+.copy-button {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: #f0f0f0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.copy-button:hover {
+  background: #e5e5e5;
+}
+
+.email-preview {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.email-subject {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.email-body-preview {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: #333;
+}
+/* ============================= */
+/* STATS CARDS */
+/* ============================= */
+
+.stats-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stats-container > * {
+  flex: 1;
+}
+/* ============================= */
+/* NEW APP LAYOUT */
+/* ============================= */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #f5f6fa;
+}
+
+
+/* ============================= */
+/* SIDEBAR */
+/* ============================= */
+
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  min-height: 100vh;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  padding: 25px 15px;
+  box-sizing: border-box;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 35px;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.sidebar-heading {
+  font-size: 11px;
+  font-weight: bold;
+  color: #999;
+  margin: 0 0 10px 10px;
+  letter-spacing: 0.8px;
+}
+
+.sidebar-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  margin-bottom: 5px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #555;
+
+  font-size: 14px;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  background: #f3f3f8;
+}
+
+.sidebar-item.active {
+  background: #eceaff;
+  color: #5b50d6;
+  font-weight: 600;
+}
+
+.sidebar-bottom {
+  margin-top: 40px;
+}
+
+
+/* ============================= */
+/* MAIN CONTENT */
+/* ============================= */
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  width: calc(100% - 230px);
+  min-height: 100vh;
+
+  padding: 30px 35px;
+
+  box-sizing: border-box;
+}
+
+
+/* ============================= */
+/* INBOX */
+/* ============================= */
+
+.inbox-page {
+  width: 100%;
+}
+
+.inbox-title {
+  margin: 20px 0 25px;
+}
+
+.inbox-title h2 {
+  margin: 0 0 5px;
+  font-size: 24px;
+}
+
+.inbox-title p {
+  margin: 0;
+  color: #777;
+}
+
+
+/* ============================= */
+/* DASHBOARD */
+/* ============================= */
+
+.dashboard-page {
+  width: 100%;
+}
+
+.dashboard-title {
+  margin: 20px 0 25px;
+}
+
+.dashboard-title h2 {
+  margin: 0 0 5px;
+  font-size: 24px;
+}
+
+.dashboard-title p {
+  margin: 0;
+  color: #777;
+}
+
+
+/* ============================= */
+/* STATS */
+/* ============================= */
+
+.stats-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.stats-container > * {
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* ============================= */
+/* AI WRITER FULL WIDTH */
+/* ============================= */
+
+.ai-writer {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  .main-content {
+    width: calc(100% - 200px);
+    padding: 25px;
+  }
+
+  .stats-container {
+    flex-wrap: wrap;
+  }
+
+  .stats-container > * {
+    min-width: 200px;
+  }
+
+}
+
+@media (max-width: 650px) {
+
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+    padding: 20px 10px;
+  }
+
+  .sidebar-logo span,
+  .sidebar-heading,
+  .sidebar-item span {
+    display: none;
+  }
+
+  .sidebar-item {
+    justify-content: center;
+  }
+
+  .main-content {
+    width: calc(100% - 70px);
+    padding: 20px;
+  }
+
+}
+.top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.google-login-button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.google-login-button:hover {
+  background: #f5f5f5;
+}
+
+.google-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.google-profile-picture {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.google-user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.google-user-info strong {
+  font-size: 14px;
+}
+
+.google-user-info span {
+  font-size: 12px;
+  color: #777;
+}
+
+.logout-button {
+  border: none;
+  padding: 8px 13px;
+  border-radius: 7px;
+  background: #f1f1f1;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.logout-button:hover {
+  background: #e5e5e5;
+}
+/* ============================= */
+/* MAILAI MODERN LOGIN           */
+/* ============================= */
+
+.login-card {
+  width: 520px;
+  max-width: calc(100% - 40px);
+
+  padding: 45px 40px;
+
+  position: relative;
+  z-index: 2;
+
+  text-align: center;
+
+  background: transparent;
+}
+
+
+/* ============================= */
+/* AI ICON                       */
+/* ============================= */
+
+.login-icon {
+  width: 96px;
+  height: 96px;
+
+  margin: 0 auto 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 28px;
+
+  background: linear-gradient(
+    135deg,
+    #8b3dff,
+    #4f46e5,
+    #168cff
+  );
+
+  box-shadow:
+    0 0 25px rgba(124, 58, 237, 0.45),
+    0 0 60px rgba(37, 99, 235, 0.25);
+
+  animation: rotateAI 6s linear infinite;
+}
+
+.login-icon span {
+  color: white;
+  font-size: 48px;
+
+  animation: sparkleRotate 3s linear infinite;
+}
+
+
+/* Continuous rotation */
+
+@keyframes rotateAI {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sparkleRotate {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.08);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+
+/* ============================= */
+/* HEADING                       */
+/* ============================= */
+
+.login-card h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 43px;
+
+  font-weight: 750;
+
+  line-height: 1.2;
+
+  letter-spacing: -1.5px;
+}
+
+
+/* AI Email gradient */
+
+.ai-title {
+  display: inline-block;
+
+  background: linear-gradient(
+    90deg,
+    #a855f7,
+    #6366f1,
+    #22d3ee
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  color: transparent;
+}
+
+
+/* ============================= */
+/* SUBTITLE                      */
+/* ============================= */
+
+.login-subtitle {
+  max-width: 480px;
+
+  margin: 25px auto 38px;
+
+  font-size: 18px;
+
+  line-height: 1.6;
+
+  color: #aeb4df;
+}
+
+
+/* ============================= */
+/* GOOGLE BUTTON                 */
+/* ============================= */
+
+.google-login-button {
+  width: 100%;
+  height: 64px;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 35px;
+
+  background: linear-gradient(
+    100deg,
+    #a238ff 0%,
+    #6947ff 45%,
+    #168cff 100%
+  );
+
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+
+  cursor: pointer;
+
+  font-size: 17px;
+  font-weight: 650;
+
+  box-shadow:
+    0 0 25px rgba(99, 102, 241, 0.35),
+    0 12px 35px rgba(37, 99, 235, 0.2);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.google-login-button:hover {
+  transform: translateY(-3px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 0 35px rgba(139, 92, 246, 0.55),
+    0 15px 45px rgba(37, 99, 235, 0.3);
+}
+
+.google-login-button:active {
+  transform: translateY(0);
+}
+
+
+/* Google logo */
+
+.google-logo {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  color: #4285f4;
+
+  flex-shrink: 0;
+}
+
+
+/* Divider */
+
+.google-divider {
+  width: 1px;
+  height: 30px;
+
+  background: rgba(255, 255, 255, 0.35);
+}
+
+
+/* Button text */
+
+.google-text {
+  white-space: nowrap;
+}
+
+
+/* Arrow */
+
+.google-arrow {
+  font-size: 25px;
+
+  margin-left: 4px;
+
+  transition: transform 0.25s ease;
+}
+
+.google-login-button:hover .google-arrow {
+  transform: translateX(5px);
+}
+
+
+/* ============================= */
+/* SECURITY TEXT                 */
+/* ============================= */
+
+.login-note {
+  margin-top: 25px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #777db1;
+
+  font-size: 13px;
+}
+
+.security-icon {
+  color: #8b5cf6;
+
+  font-size: 18px;
+}
+
+
+/* ============================= */
+/* MOBILE                        */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+  .login-card {
+    padding: 30px 20px;
+  }
+
+  .login-icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 23px;
+    margin-bottom: 28px;
+  }
+
+  .login-icon span {
+    font-size: 38px;
+  }
+
+  .login-card h1 {
+    font-size: 31px;
+  }
+
+  .login-subtitle {
+    font-size: 15px;
+  }
+
+  .google-login-button {
+    height: 58px;
+    font-size: 15px;
+  }
+
+  .google-arrow {
+    display: none;
+  }
+}
+/* ========================================= */
+/*              MAILAI LOGIN                 */
+/* ========================================= */
+
+.mailai-login-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(124, 58, 237, 0.18),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(37, 99, 235, 0.18),
+      transparent 32%
+    ),
+    #0b0b18;
+}
+
+
+/* Background glow */
+
+.mailai-login-page::before {
+  content: "";
+
+  position: absolute;
+
+  width: 450px;
+  height: 450px;
+
+  top: -220px;
+  right: -150px;
+
+  border-radius: 50%;
+
+  background: rgba(124, 58, 237, 0.15);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+.mailai-login-page::after {
+  content: "";
+
+  position: absolute;
+
+  width: 450px;
+  height: 450px;
+
+  bottom: -250px;
+  left: -160px;
+
+  border-radius: 50%;
+
+  background: rgba(37, 99, 235, 0.14);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+
+/* ========================================= */
+/*              MAIN CONTENT                 */
+/* ========================================= */
+
+.mailai-login-content {
+  width: 560px;
+  max-width: calc(100% - 40px);
+
+  position: relative;
+  z-index: 5;
+
+  text-align: center;
+
+  padding: 25px 20px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================= */
+/*                AI ICON                    */
+/* ========================================= */
+
+.mailai-ai-icon {
+  width: 82px;
+  height: 82px;
+
+  margin: 0 auto 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #a855f7 0%,
+      #6366f1 48%,
+      #168cff 100%
+    );
+
+  box-shadow:
+    0 0 25px rgba(139, 92, 246, 0.55),
+    0 0 55px rgba(37, 99, 235, 0.30);
+
+  animation: mailai-icon-rotate 8s linear infinite;
+}
+
+
+.mailai-ai-icon span {
+  color: white;
+
+  font-size: 40px;
+
+  line-height: 1;
+
+  display: block;
+}
+
+
+/* Continuous rotation */
+
+@keyframes mailai-icon-rotate {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* ========================================= */
+/*                HEADING                    */
+/* ========================================= */
+
+.mailai-login-title {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 40px;
+
+  font-weight: 750;
+
+  line-height: 1.16;
+
+  letter-spacing: -1.4px;
+}
+
+
+/* AI Email gradient */
+
+.mailai-login-title span {
+  background:
+    linear-gradient(
+      90deg,
+      #a855f7 0%,
+      #6366f1 48%,
+      #22d3ee 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  color: transparent;
+}
+
+
+/* ========================================= */
+/*                SUBTITLE                   */
+/* ========================================= */
+
+.mailai-login-subtitle {
+  max-width: 500px;
+
+  margin: 20px auto 30px;
+
+  color: #aeb5df;
+
+  font-size: 16px;
+
+  line-height: 1.6;
+
+  font-weight: 400;
+}
+
+
+/* ========================================= */
+/*             GOOGLE BUTTON                 */
+/* ========================================= */
+
+.mailai-google-button {
+  width: 100%;
+  max-width: 500px;
+
+  height: 58px;
+
+  margin: 0 auto;
+
+  padding: 0 21px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  border-radius: 32px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #a238ff 0%,
+      #6847ff 45%,
+      #168cff 100%
+    );
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  font-family: inherit;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 0 23px rgba(99, 102, 241, 0.35),
+    0 10px 30px rgba(37, 99, 235, 0.20);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+
+.mailai-google-button:hover {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 0 35px rgba(139, 92, 246, 0.50),
+    0 13px 38px rgba(37, 99, 235, 0.28);
+}
+
+
+.mailai-google-button:active {
+  transform: translateY(0);
+}
+
+
+/* ========================================= */
+/*           GOOGLE ORIGINAL LOGO             */
+/* ========================================= */
+
+.mailai-google-logo {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 2px 7px rgba(0, 0, 0, 0.15);
+}
+
+
+/*
+  Google's G uses multiple colors.
+  This uses a Google-style multicolor
+  gradient instead of making it blue.
+*/
+
+.google-blue {
+  font-family: Arial, sans-serif;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  background:
+    conic-gradient(
+      from -45deg,
+      #4285f4 0deg 90deg,
+      #34a853 90deg 180deg,
+      #fbbc05 180deg 270deg,
+      #ea4335 270deg 360deg
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* ========================================= */
+/*                 DIVIDER                   */
+/* ========================================= */
+
+.mailai-google-divider {
+  width: 1px;
+
+  height: 27px;
+
+  background: rgba(255, 255, 255, 0.35);
+}
+
+
+/* ========================================= */
+/*              BUTTON TEXT                 */
+/* ========================================= */
+
+.mailai-google-text {
+  white-space: nowrap;
+}
+
+
+/* ========================================= */
+/*                  ARROW                   */
+/* ========================================= */
+
+.mailai-google-arrow {
+  font-size: 24px;
+
+  line-height: 1;
+
+  margin-left: 3px;
+
+  transition:
+    transform 0.25s ease;
+}
+
+
+.mailai-google-button:hover .mailai-google-arrow {
+  transform: translateX(5px);
+}
+
+
+/* ========================================= */
+/*              SECURITY NOTE               */
+/* ========================================= */
+
+.mailai-login-note {
+  margin: 19px 0 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  color: #777db1;
+
+  font-size: 12px;
+}
+
+
+.security-icon {
+  color: #8b5cf6;
+
+  font-size: 17px;
+}
+
+
+/* ========================================= */
+/*                 MOBILE                   */
+/* ========================================= */
+
+@media (max-width: 650px) {
+
+  .mailai-login-content {
+    padding: 20px 15px;
+  }
+
+  .mailai-ai-icon {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 20px;
+
+    margin-bottom: 23px;
+  }
+
+  .mailai-ai-icon span {
+    font-size: 34px;
+  }
+
+  .mailai-login-title {
+    font-size: 31px;
+  }
+
+  .mailai-login-subtitle {
+    font-size: 14px;
+  }
+
+  .mailai-google-button {
+    height: 55px;
+
+    font-size: 14px;
+  }
+
+  .mailai-google-arrow {
+    display: none;
+  }
+}
+.star-button {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 5px;
+  color: #999;
+}
+
+.star-button:hover {
+  color: #f5b400;
+}
+
+.email-content {
+  flex: 1;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 25px;
+  border-bottom: 1px solid #ddd;
+  background: white;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.header-title p {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.header-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-picture {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+   display: block;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-info strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.account-info span {
+  font-size: 12px;
+  color: #777;
+}
+
+.logout-button {
+  margin-left: 8px;
+  padding: 7px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #f5f5f5;
+}
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.compose-button {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 7px;
+  background: #6c4cff;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.compose-button:hover {
+  background: #5738e8;
+}
+
+.compose-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 25px;
+  z-index: 1000;
+}
+
+.compose-box {
+  width: 480px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.compose-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f5f5f5;
+}
+
+.compose-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.compose-header button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.compose-box input,
+.compose-box textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid #eee;
+  padding: 12px 16px;
+  outline: none;
+  font-family: inherit;
+}
+
+.compose-box textarea {
+  height: 250px;
+  resize: none;
+}
+
+.compose-footer {
+  padding: 12px 16px;
+}
+
+.send-button {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #6c4cff;
+  color: white;
+  cursor: pointer;
+}
+
+.send-button:disabled {
+  opacity: 0.6;
+}
+
+.compose-message {
+  padding: 0 16px;
+  font-size: 13px;
+}
+.inbox-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inbox-heading-row h2 {
+  margin: 0;
+}
+
+
+.compose-area {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 30px;
+  margin-top: 55px;
+  margin-bottom: -45px;
+  position: relative;
+  z-index: 10;
+}
+.compose-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 7px;
+  background: #6c4cff;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.compose-button:hover {
+  background: #5738e8;
+}
