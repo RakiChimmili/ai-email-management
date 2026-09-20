@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ComposeEmail from "./components/ComposeEmail"; 
+
+import ComposeEmail from "./components/ComposeEmail";
 import AIEmailWriter from "./components/AIEmailWriter";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -8,16 +9,25 @@ import StatsCard from "./components/StatsCard";
 import EmailList from "./components/EmailList";
 import EmailDetails from "./components/EmailDetails";
 import LoginPage from "./components/LoginPage";
-const API_URL = import.meta.env.VITE_API_URL;
+
 import "./App.css";
 
+const API_URL = "https://mailai-backend-usft.onrender.com";
+
 function App() {
+
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [checkingLogin, setCheckingLogin] = useState(true);
+
   const [showCompose, setShowCompose] = useState(false);
-  const [activeSection, setActiveSection] = useState("Inbox");
-  const [selectedEmail, setSelectedEmail] = useState(null);
+
+  const [activeSection, setActiveSection] =
+    useState("Inbox");
+
+  const [selectedEmail, setSelectedEmail] =
+    useState(null);
+
   const [emails, setEmails] = useState([]);
 
   // Search
@@ -31,150 +41,250 @@ function App() {
     spam: 0
   });
 
-  // Check Google login
+
+  // ================================
+  // CHECK GOOGLE LOGIN
+  // ================================
+
   useEffect(() => {
     checkLogin();
   }, []);
-const checkLogin = async () => {
-  try {
-    const response = await axios.get(
-      "http://localhost:5000/auth/user",
-      {
-        withCredentials: true
-      }
-    );
 
-    console.log("Google user:", response.data);
 
-    setLoggedIn(true);
-    setUser(response.data);
+  const checkLogin = async () => {
 
-  } catch (error) {
-    console.error("Login check error:", error);
-    console.error("Server response:", error.response?.data);
+    try {
 
-    setLoggedIn(false);
-    setUser(null);
+      const response = await axios.get(
+        `${API_URL}/auth/user`,
+        {
+          withCredentials: true
+        }
+      );
 
-  } finally {
-    setCheckingLogin(false);
-  }
-};
-  
-  // Fetch Gmail emails
+      console.log(
+        "Google user:",
+        response.data
+      );
+
+      setLoggedIn(true);
+      setUser(response.data);
+
+    } catch (error) {
+
+      console.error(
+        "Login check error:",
+        error
+      );
+
+      console.error(
+        "Server response:",
+        error.response?.data
+      );
+
+      setLoggedIn(false);
+      setUser(null);
+
+    } finally {
+
+      setCheckingLogin(false);
+
+    }
+  };
+
+
+  // ================================
+  // FETCH GMAIL EMAILS
+  // ================================
+
   useEffect(() => {
+
     if (!loggedIn) return;
 
-    // Don't fetch email list for Dashboard
     if (activeSection === "Dashboard") return;
 
     axios
       .get(
-        "http://localhost:5000/api/gmail/messages",
+        `${API_URL}/api/gmail/messages`,
         {
           params: {
             folder: activeSection,
             search: searchText
           },
+
           withCredentials: true
         }
       )
+
       .then((response) => {
+
         setEmails(response.data);
+
       })
+
       .catch((error) => {
+
         console.error(
           "Error fetching Gmail messages:",
           error
         );
 
         setEmails([]);
-      });
-  }, [loggedIn, activeSection, searchText]);
 
-  // Fetch Dashboard statistics
+      });
+
+  }, [
+    loggedIn,
+    activeSection,
+    searchText
+  ]);
+
+
+  // ================================
+  // DASHBOARD STATISTICS
+  // ================================
+
   useEffect(() => {
+
     if (!loggedIn) return;
 
     if (activeSection !== "Dashboard") return;
 
     axios
       .get(
-        "http://localhost:5000/api/gmail/dashboard-stats",
+        `${API_URL}/api/gmail/dashboard-stats`,
         {
           withCredentials: true
         }
       )
+
       .then((response) => {
-        setDashboardStats(response.data);
+
+        setDashboardStats(
+          response.data
+        );
+
       })
+
       .catch((error) => {
+
         console.error(
           "Dashboard stats error:",
           error
         );
-      });
-  }, [loggedIn, activeSection]);
 
-  // Loading screen
+      });
+
+  }, [
+    loggedIn,
+    activeSection
+  ]);
+
+
+  // ================================
+  // LOADING
+  // ================================
+
   if (checkingLogin) {
     return null;
   }
 
-  // Login screen
+
+  // ================================
+  // LOGIN PAGE
+  // ================================
+
   if (!loggedIn) {
     return <LoginPage />;
   }
+
+
+  // ================================
+  // LOGOUT
+  // ================================
+
   const handleLogout = async () => {
-  try {
-    await axios.post(
-      "http://localhost:5000/auth/logout",
-      {},
-      { withCredentials: true }
-    );
 
-    setLoggedIn(false);
-    setUser(null);
-    setEmails([]);
-    setSelectedEmail(null);
-    setActiveSection("Inbox");
-  } catch (error) {
-    console.error("Logout error:", error);
-  }
-};
+    try {
 
-  // Change sidebar section
-  const handleSectionChange = (section) => {
-    setActiveSection(section);
-    setSelectedEmail(null);
+      await axios.post(
+        `${API_URL}/auth/logout`,
+        {},
+        {
+          withCredentials: true
+        }
+      );
+
+      setLoggedIn(false);
+      setUser(null);
+      setEmails([]);
+      setSelectedEmail(null);
+      setActiveSection("Inbox");
+
+    } catch (error) {
+
+      console.error(
+        "Logout error:",
+        error
+      );
+
+    }
   };
 
-  // Update star without reloading the page
+
+  // ================================
+  // CHANGE SIDEBAR SECTION
+  // ================================
+
+  const handleSectionChange = (section) => {
+
+    setActiveSection(section);
+    setSelectedEmail(null);
+
+  };
+
+
+  // ================================
+  // UPDATE STAR
+  // ================================
+
   const handleStarChange = (
     emailId,
     newStarredStatus
   ) => {
+
     setEmails((currentEmails) =>
+
       currentEmails.map((email) =>
+
         email.id === emailId
           ? {
               ...email,
-              isStarred: newStarredStatus
+              isStarred:
+                newStarredStatus
             }
           : email
+
       )
+
     );
   };
 
+
   const filteredEmails = emails;
 
+
   return (
+
     <div className="app">
 
       <Sidebar
         activeSection={activeSection}
-        onSectionChange={handleSectionChange}
+        onSectionChange={
+          handleSectionChange
+        }
       />
+
 
       <main className="main-content">
 
@@ -182,7 +292,9 @@ const checkLogin = async () => {
 
           <EmailDetails
             email={selectedEmail}
-            onBack={() => setSelectedEmail(null)}
+            onBack={() =>
+              setSelectedEmail(null)
+            }
           />
 
         ) : activeSection === "AI Writer" ? (
@@ -192,11 +304,12 @@ const checkLogin = async () => {
         ) : activeSection === "Dashboard" ? (
 
           <div className="dashboard-page">
-          <Header
-  user={user}
-  onLogout={handleLogout}
 
-/>
+            <Header
+              user={user}
+              onLogout={handleLogout}
+            />
+
 
             <div className="dashboard-title">
 
@@ -208,26 +321,35 @@ const checkLogin = async () => {
 
             </div>
 
+
             <div className="stats-container">
 
               <StatsCard
                 title="Total Emails"
-                value={dashboardStats.totalEmails}
+                value={
+                  dashboardStats.totalEmails
+                }
               />
 
               <StatsCard
                 title="Unread"
-                value={dashboardStats.unread}
+                value={
+                  dashboardStats.unread
+                }
               />
 
               <StatsCard
                 title="Important"
-                value={dashboardStats.important}
+                value={
+                  dashboardStats.important
+                }
               />
 
               <StatsCard
                 title="Spam"
-                value={dashboardStats.spam}
+                value={
+                  dashboardStats.spam
+                }
               />
 
             </div>
@@ -239,22 +361,30 @@ const checkLogin = async () => {
           <div className="inbox-page">
 
             <Header
-  user={user}
-  onLogout={handleLogout}
-  
-/>
-<div className="compose-area">
-  <button
-    className="compose-button"
-    onClick={() => setShowCompose(true)}
-  >
-    ✏️ Compose
-  </button>
-</div>
+              user={user}
+              onLogout={handleLogout}
+            />
+
+
+            <div className="compose-area">
+
+              <button
+                className="compose-button"
+                onClick={() =>
+                  setShowCompose(true)
+                }
+              >
+                ✏️ Compose
+              </button>
+
+            </div>
+
 
             <div className="inbox-title">
 
-              <h2>{activeSection}</h2>
+              <h2>
+                {activeSection}
+              </h2>
 
               <p>
                 Manage your emails with MailAI
@@ -262,20 +392,31 @@ const checkLogin = async () => {
 
             </div>
 
+
             <EmailList
               emails={filteredEmails}
-              onEmailClick={setSelectedEmail}
-              onStarChange={handleStarChange}
+              onEmailClick={
+                setSelectedEmail
+              }
+              onStarChange={
+                handleStarChange
+              }
             />
-          </div>
-        )}
-    
-      {showCompose && (
-  <ComposeEmail
-    onClose={() => setShowCompose(false)}
-  />
-)}
 
+          </div>
+
+        )}
+
+
+        {showCompose && (
+
+          <ComposeEmail
+            onClose={() =>
+              setShowCompose(false)
+            }
+          />
+
+        )}
 
       </main>
 
