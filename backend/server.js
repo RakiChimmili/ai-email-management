@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import { createClient } from "redis";
+import { RedisStore } from "connect-redis";
 dotenv.config();
 
 import express from "express";
@@ -26,9 +28,23 @@ app.use(
   })
 );
 app.use(express.json());
+const redisClient = createClient({
+  url: process.env.REDIS_URL
+});
+
+redisClient.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+
+await redisClient.connect();
+
+const redisStore = new RedisStore({
+  client: redisClient,
+});
 
 app.use(
   session({
+    store: redisStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
