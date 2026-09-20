@@ -21,11 +21,10 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(
   cors({
-    origin: frontendUrl,
+    origin: "https://ai-email-management-eight.vercel.app",
     credentials: true
   })
 );
-
 app.use(express.json());
 
 app.use(
