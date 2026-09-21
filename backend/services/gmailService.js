@@ -222,7 +222,9 @@ console.log("GMAIL MESSAGE IDS:", messages);
           id: message.id,
           format: "full"
         });
+      console.log("FINAL EMAIL LIST COUNT:", emailList.length);
 
+return emailList;
       const data = response.data;
 
       const headers =
