@@ -135,7 +135,12 @@ function getHeader(headers, name) {
 // =====================================================
 async function predictSpam(subject, body) {
   try {
-    const emailText = `${subject || ""} ${body || ""}`;
+    const cleanSubject = subject || "";
+const cleanBody = body || "";
+
+const emailText =
+  `${cleanSubject} ${cleanBody}`.slice(0, 12000);
+    
 
     const scriptPath = path.join(
       __dirname,
