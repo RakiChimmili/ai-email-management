@@ -133,7 +133,6 @@ function getHeader(headers, name) {
 // =====================================================
 // ML SPAM PREDICTION
 // =====================================================
-
 async function predictSpam(subject, body) {
   try {
     const emailText = `${subject || ""} ${body || ""}`;
@@ -143,17 +142,21 @@ async function predictSpam(subject, body) {
       "../ml/predict.py"
     );
 
+    const pythonCommand =
+      process.platform === "win32"
+        ? "python"
+        : "python3";
+
     console.log("=================================");
     console.log("RUNNING SPAM PREDICTION");
-    console.log("SCRIPT:", scriptPath);
+    console.log("PYTHON COMMAND:", pythonCommand);
+    console.log("SCRIPT PATH:", scriptPath);
     console.log("TEXT LENGTH:", emailText.length);
     console.log("=================================");
 
     const { stdout, stderr } =
       await execFileAsync(
-         process.platform === "win32"
-      ? "python"
-      : "python3",
+        pythonCommand,
         [scriptPath, emailText],
         {
           timeout: 10000,
@@ -161,61 +164,42 @@ async function predictSpam(subject, body) {
         }
       );
 
-    console.log("PYTHON STDOUT:", stdout);
-    console.log("PYTHON STDERR:", stderr);
+    console.log("PYTHON PROCESS FINISHED");
+    console.log("PYTHON STDOUT:", JSON.stringify(stdout));
+    console.log("PYTHON STDERR:", JSON.stringify(stderr));
 
     if (!stdout || !stdout.trim()) {
       throw new Error(
-        "Python returned empty output"
+        "Python script returned EMPTY output"
       );
     }
 
     const result =
       JSON.parse(stdout.trim());
 
-    console.log(
-      "ML RESULT:",
-      result
-    );
+    console.log("ML RESULT:", result);
 
     return {
       spam: Boolean(result.spam),
-      spamScore: Number(result.spamScore) || 0
+      spamScore:
+        Number(result.spamScore) || 0
     };
 
   } catch (error) {
 
-    console.error(
-      "================================="
-    );
-
-    console.error(
-      "SPAM PREDICTION ERROR"
-    );
-
-    console.error(
-      "MESSAGE:",
-      error.message
-    );
-
-    console.error(
-      "CODE:",
-      error.code
-    );
-
+    console.error("=================================");
+    console.error("SPAM PREDICTION ERROR");
+    console.error("MESSAGE:", error.message);
+    console.error("CODE:", error.code);
     console.error(
       "STDERR:",
-      error.stderr
+      JSON.stringify(error.stderr)
     );
-
     console.error(
       "STDOUT:",
-      error.stdout
+      JSON.stringify(error.stdout)
     );
-
-    console.error(
-      "================================="
-    );
+    console.error("=================================");
 
     return {
       spam: false,
@@ -223,7 +207,6 @@ async function predictSpam(subject, body) {
     };
   }
 }
-
 // =====================================================
 // GET GMAIL MESSAGES
 // =====================================================
