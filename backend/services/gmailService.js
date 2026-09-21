@@ -136,32 +136,37 @@ function getHeader(headers, name) {
 
 async function predictSpam(subject, body) {
   try {
-    const emailText =
-      `${subject || ""} ${body || ""}`;
+    const emailText = `${subject || ""} ${body || ""}`;
 
     const scriptPath = path.join(
       __dirname,
       "../ml/predict.py"
     );
 
+    console.log("=================================");
+    console.log("RUNNING SPAM PREDICTION");
+    console.log("SCRIPT:", scriptPath);
+    console.log("TEXT LENGTH:", emailText.length);
+    console.log("=================================");
+
     const { stdout, stderr } =
       await execFileAsync(
-        "python",
+         process.platform === "win32"
+      ? "python"
+      : "python3",
         [scriptPath, emailText],
         {
-          timeout: 10000
+          timeout: 10000,
+          maxBuffer: 1024 * 1024
         }
       );
 
-    console.log(
-      "PYTHON STDOUT:",
-      stdout
-    );
+    console.log("PYTHON STDOUT:", stdout);
+    console.log("PYTHON STDERR:", stderr);
 
-    if (stderr) {
-      console.log(
-        "PYTHON STDERR:",
-        stderr
+    if (!stdout || !stdout.trim()) {
+      throw new Error(
+        "Python returned empty output"
       );
     }
 
@@ -174,25 +179,50 @@ async function predictSpam(subject, body) {
     );
 
     return {
-      spam: result.spam,
-      spamScore: result.spamScore
+      spam: Boolean(result.spam),
+      spamScore: Number(result.spamScore) || 0
     };
 
   } catch (error) {
 
     console.error(
-      "Spam prediction error:",
+      "================================="
+    );
+
+    console.error(
+      "SPAM PREDICTION ERROR"
+    );
+
+    console.error(
+      "MESSAGE:",
       error.message
     );
 
-    // Don't stop Gmail loading
+    console.error(
+      "CODE:",
+      error.code
+    );
+
+    console.error(
+      "STDERR:",
+      error.stderr
+    );
+
+    console.error(
+      "STDOUT:",
+      error.stdout
+    );
+
+    console.error(
+      "================================="
+    );
+
     return {
       spam: false,
       spamScore: 0
     };
   }
 }
-
 
 // =====================================================
 // GET GMAIL MESSAGES
