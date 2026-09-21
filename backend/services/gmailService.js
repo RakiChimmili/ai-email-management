@@ -538,7 +538,7 @@ export async function getGmailDashboardStats(
 
     countGmailMessages(
       gmail,
-      " is:starred"
+      "is:starred"
     ),
 
     countGmailMessages(
