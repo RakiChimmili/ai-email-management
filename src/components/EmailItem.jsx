@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const API_URL = "https://mailai-backend-usft.onrender.com";
+
 function EmailItem({
   email,
   onEmailClick,
@@ -13,8 +15,8 @@ function EmailItem({
       const newStarredStatus =
         !email.isStarred;
 
-      await axios.patch(
-        `http://localhost:5000/api/gmail/${email.id}/star`,
+await axios.patch(
+  `${API_URL}/api/gmail/${email.id}/star`,
         {
           starred: newStarredStatus
         },

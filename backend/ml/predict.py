@@ -24,6 +24,8 @@ prediction = model.predict([text])[0]
 spam_probability = model.predict_proba([text])[0][1]
 
 
+
+
 # Return result
 result = {
     "spam": prediction == "spam",
