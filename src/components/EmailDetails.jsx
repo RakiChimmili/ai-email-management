@@ -1,68 +1,115 @@
-import { useEffect,useState } from "react";
+
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-function EmailDetails({ email, onBack }) {
-  useEffect(() => {
-  if (!email.isRead) {
-    handleMarkAsRead();
-  }
-}, [email.id]);
-   const handleMarkAsRead = async () => {
-  console.log("Trying to mark as read:", email.id, email.isRead);
+const API_URL = "https://mailai-backend-usft.onrender.com";
 
-  if (email.isRead) return;
+function EmailDetails({
+  email,
+  onBack,
+  onEmailRead
+}) {
 
-  try {
-    const response = await axios.patch(
-      `http://localhost:5000/api/gmail/${email.id}/read`,
-      {},
-      {
-        withCredentials: true
-      }
-    );
-
-    console.log("Mark as read response:", response.data);
-  } catch (error) {
-    console.error("Mark as read error:", error);
-    console.error("Server response:", error.response?.data);
-  }
-};
- const [overview, setOverview] = useState("");
+  const [overview, setOverview] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [message, setMessage] = useState("");
-  
+
+  // ================================
+  // MARK EMAIL AS READ
+  // ================================
+
+  useEffect(() => {
+
+    const markEmailAsRead = async () => {
+
+      if (email.isRead) {
+        return;
+      }
+
+      try {
+
+        await axios.patch(
+          `${API_URL}/api/gmail/${email.id}/read`,
+          {},
+          {
+            withCredentials: true
+          }
+        );
+
+        console.log(
+          "Email marked as read:",
+          email.id
+        );
+
+        // Update inbox state
+        if (onEmailRead) {
+          onEmailRead(email.id);
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Mark as read error:",
+          error
+        );
+
+        console.error(
+          "Server response:",
+          error.response?.data
+        );
+
+      }
+
+    };
+
+    markEmailAsRead();
+
+  }, [email.id, email.isRead, onEmailRead]);
+
+
   // ================================
   // AI OVERVIEW
   // ================================
 
   const handleAIOverview = async () => {
+
     try {
+
       setLoading(true);
       setError("");
       setOverview("");
 
       const response = await axios.post(
-        `http://localhost:5000/api/gmail/${email.id}/overview`,
+        `${API_URL}/api/gmail/${email.id}/overview`,
         {},
         {
           withCredentials: true
         }
       );
 
-      setOverview(response.data.overview);
+      setOverview(
+        response.data.overview
+      );
 
     } catch (error) {
-      console.error("AI Overview error:", error);
+
+      console.error(
+        "AI Overview error:",
+        error
+      );
 
       setError(
         "Failed to generate AI overview."
       );
 
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
 
@@ -71,7 +118,9 @@ function EmailDetails({ email, onBack }) {
   // ================================
 
   const handleStar = async () => {
+
     try {
+
       setActionLoading(true);
       setMessage("");
 
@@ -79,7 +128,7 @@ function EmailDetails({ email, onBack }) {
         !email.isStarred;
 
       await axios.patch(
-        `http://localhost:5000/api/gmail/${email.id}/star`,
+        `${API_URL}/api/gmail/${email.id}/star`,
         {
           starred: newStarredStatus
         },
@@ -98,6 +147,7 @@ function EmailDetails({ email, onBack }) {
       );
 
     } catch (error) {
+
       console.error(
         "Star update error:",
         error
@@ -108,8 +158,11 @@ function EmailDetails({ email, onBack }) {
       );
 
     } finally {
+
       setActionLoading(false);
+
     }
+
   };
 
 
@@ -118,12 +171,14 @@ function EmailDetails({ email, onBack }) {
   // ================================
 
   const handleArchive = async () => {
+
     try {
+
       setActionLoading(true);
       setMessage("");
 
       await axios.patch(
-        `http://localhost:5000/api/gmail/${email.id}/archive`,
+        `${API_URL}/api/gmail/${email.id}/archive`,
         {},
         {
           withCredentials: true
@@ -139,6 +194,7 @@ function EmailDetails({ email, onBack }) {
       }, 500);
 
     } catch (error) {
+
       console.error(
         "Archive error:",
         error
@@ -149,7 +205,9 @@ function EmailDetails({ email, onBack }) {
       );
 
       setActionLoading(false);
+
     }
+
   };
 
 
@@ -158,12 +216,14 @@ function EmailDetails({ email, onBack }) {
   // ================================
 
   const handleMoveToInbox = async () => {
+
     try {
+
       setActionLoading(true);
       setMessage("");
 
       await axios.patch(
-        `http://localhost:5000/api/gmail/${email.id}/inbox`,
+        `${API_URL}/api/gmail/${email.id}/inbox`,
         {},
         {
           withCredentials: true
@@ -179,6 +239,7 @@ function EmailDetails({ email, onBack }) {
       }, 500);
 
     } catch (error) {
+
       console.error(
         "Move to inbox error:",
         error
@@ -189,7 +250,9 @@ function EmailDetails({ email, onBack }) {
       );
 
       setActionLoading(false);
+
     }
+
   };
 
 
@@ -198,12 +261,14 @@ function EmailDetails({ email, onBack }) {
   // ================================
 
   const handleTrash = async () => {
+
     try {
+
       setActionLoading(true);
       setMessage("");
 
       await axios.delete(
-        `http://localhost:5000/api/gmail/${email.id}/trash`,
+        `${API_URL}/api/gmail/${email.id}/trash`,
         {
           withCredentials: true
         }
@@ -218,6 +283,7 @@ function EmailDetails({ email, onBack }) {
       }, 500);
 
     } catch (error) {
+
       console.error(
         "Trash error:",
         error
@@ -228,13 +294,15 @@ function EmailDetails({ email, onBack }) {
       );
 
       setActionLoading(false);
+
     }
+
   };
 
 
   return (
-    <div className="email-details"
-    onLoad={handleMarkAsRead}>
+
+    <div className="email-details">
 
       {/* BACK */}
 
@@ -250,7 +318,9 @@ function EmailDetails({ email, onBack }) {
 
       <div className="email-details-header">
 
-        <h2>{email.subject}</h2>
+        <h2>
+          {email.subject}
+        </h2>
 
         <p className="email-sender">
           From: {email.sender}
@@ -278,23 +348,27 @@ function EmailDetails({ email, onBack }) {
 
 
         {email.folder === "Inbox" && (
+
           <button
             onClick={handleArchive}
             disabled={actionLoading}
           >
             📥 Archive
           </button>
+
         )}
 
 
         {email.folder === "Archive" && (
-  <button
-    onClick={handleMoveToInbox}
-    disabled={actionLoading}
-  >
-    📥 Move to Inbox
-  </button>
-)}
+
+          <button
+            onClick={handleMoveToInbox}
+            disabled={actionLoading}
+          >
+            📥 Move to Inbox
+          </button>
+
+        )}
 
 
         <button
@@ -310,16 +384,22 @@ function EmailDetails({ email, onBack }) {
       {/* ACTION MESSAGE */}
 
       {message && (
+
         <p className="action-message">
           {message}
         </p>
+
       )}
 
 
       {/* EMAIL BODY */}
 
       <div className="email-body">
-        <p>{email.body}</p>
+
+        <p>
+          {email.body}
+        </p>
+
       </div>
 
 
@@ -339,26 +419,37 @@ function EmailDetails({ email, onBack }) {
 
 
         {overview && (
+
           <div className="ai-overview-box">
 
-            <h3>✨ AI Overview</h3>
+            <h3>
+              ✨ AI Overview
+            </h3>
 
-            <p>{overview}</p>
+            <p>
+              {overview}
+            </p>
 
           </div>
+
         )}
 
 
         {error && (
+
           <p className="ai-error">
             {error}
           </p>
+
         )}
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default EmailDetails;
+

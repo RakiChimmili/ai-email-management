@@ -291,12 +291,34 @@ function App() {
         {selectedEmail ? (
 
           <EmailDetails
-            email={selectedEmail}
-            onBack={() =>
-              setSelectedEmail(null)
-            }
-          />
+  email={selectedEmail}
+  onBack={() =>
+    setSelectedEmail(null)
+  }
+  onEmailRead={(emailId) => {
 
+    setEmails((currentEmails) =>
+      currentEmails.map((email) =>
+        email.id === emailId
+          ? {
+              ...email,
+              isRead: true
+            }
+          : email
+      )
+    );
+
+    setSelectedEmail((currentEmail) =>
+      currentEmail
+        ? {
+            ...currentEmail,
+            isRead: true
+          }
+        : currentEmail
+    );
+
+  }}
+/>
         ) : activeSection === "AI Writer" ? (
 
           <AIEmailWriter />
