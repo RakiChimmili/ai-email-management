@@ -7,6 +7,7 @@ function EmailItem({
   onEmailClick,
   onStarChange
 }) {
+  console.log("EMAIL ML DATA:", email);
 
   const handleStarClick = async (event) => {
     event.stopPropagation();
