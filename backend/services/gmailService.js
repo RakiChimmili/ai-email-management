@@ -208,6 +208,10 @@ export async function getGmailMessages(
 
   const messages =
     listResponse.data.messages || [];
+    console.log("GMAIL FOLDER:", folder);
+console.log("GMAIL QUERY:", query);
+console.log("GMAIL MESSAGE COUNT:", messages.length);
+console.log("GMAIL MESSAGE IDS:", messages);
 
   const emailList = await Promise.all(
     messages.map(async (message) => {
