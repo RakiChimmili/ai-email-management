@@ -277,7 +277,7 @@ export async function getGmailMessages(
     }
 
     else if (folder === "Spam") {
-      query = "in:spam";
+      query = "in:anywhere -in:trash";
     }
 
     else if (folder === "Archive") {
@@ -298,7 +298,7 @@ export async function getGmailMessages(
       await gmail.users.messages.list({
         userId: "me",
         q: query,
-        maxResults: 20
+        maxResults: folder === "Spam" ? 100 : 20
       });
 
     const messages =
@@ -593,14 +593,19 @@ export async function getGmailMessages(
           email !== null
       );
 
+    const visibleEmails =
+      folder === "Spam"
+        ? validEmails.filter((email) => email.spam)
+        : validEmails;
+
 
     console.log(
       "FINAL EMAIL LIST COUNT:",
-      validEmails.length
+      visibleEmails.length
     );
 
 
-    return validEmails;
+    return visibleEmails;
 
 
   } catch (error) {
@@ -996,10 +1001,10 @@ export async function getGmailDashboardStats(
       "is:starred"
     ),
 
-    countGmailMessages(
-      gmail,
-      "in:spam"
-    )
+    getGmailMessages(
+      tokens,
+      "Spam"
+    ).then((emails) => emails.length)
 
   ]);
 
