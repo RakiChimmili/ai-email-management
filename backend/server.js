@@ -13,8 +13,11 @@ import gmailRoutes from "./routes/gmailRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const frontendUrl =
-  process.env.FRONTEND_URL || "http://localhost:5173";
+const allowedOrigins = (process.env.FRONTEND_URL ||
+  "https://ai-email-management-eight.vercel.app")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // Required when deployed behind Render's proxy
 if (process.env.NODE_ENV === "production") {
@@ -23,33 +26,35 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(
   cors({
-    origin: "https://ai-email-management-eight.vercel.app",
+    origin: allowedOrigins,
     credentials: true
   })
 );
 app.use(express.json());
-const redisClient = createClient({
-  url: process.env.REDIS_URL
-});
 
-redisClient.on("error", (err) => {
-  console.error("Redis error:", err);
-});
+let sessionStore;
 
-await redisClient.connect();
+if (process.env.REDIS_URL) {
+  const redisClient = createClient({
+    url: process.env.REDIS_URL
+  });
 
-const redisStore = new RedisStore({
-  client: redisClient,
-});
+  redisClient.on("error", (err) => {
+    console.error("Redis error:", err);
+  });
+
+  await redisClient.connect();
+  sessionStore = new RedisStore({ client: redisClient });
+}
 
 app.use(
   session({
-    store: redisStore,
+    ...(sessionStore ? { store: sessionStore } : {}),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       sameSite: "none"
     }

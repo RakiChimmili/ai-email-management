@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+import { API_URL } from "../config";
 function AIEmailWriter() {
   const [to, setTo] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -25,7 +25,7 @@ function AIEmailWriter() {
       setCopied(false);
 
       const response = await axios.post(
-        "http://localhost:5000/api/emails/write",
+        `${API_URL}/api/gmail/ai-write`,
         {
           prompt: prompt,
           tone: tone

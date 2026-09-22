@@ -9,10 +9,11 @@ const execFileAsync = promisify(execFile);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const enableSpamModel = process.env.ENABLE_SPAM_ML === "true";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 
 // =====================================================
@@ -134,6 +135,13 @@ function getHeader(headers, name) {
 // ML SPAM PREDICTION
 // =====================================================
 async function predictSpam(subject, body) {
+  if (!enableSpamModel) {
+    return {
+      spam: false,
+      spamScore: 0
+    };
+  }
+
   try {
     const cleanSubject = subject || "";
 const cleanBody = body || "";
@@ -483,6 +491,9 @@ export async function getGmailMessages(
               // RETURN EMAIL
               // =================================================
 
+              const isSpam =
+                spamAnalysis.spam || labelIds.includes("SPAM");
+
               return {
 
                 id: data.id,
@@ -508,7 +519,7 @@ export async function getGmailMessages(
                   folderName,
 
                 category:
-                  spamAnalysis.spam
+                  isSpam
                     ? "Spam"
                     : category,
 
@@ -519,10 +530,12 @@ export async function getGmailMessages(
                   "Neutral",
 
                 spam:
-                  spamAnalysis.spam,
+                  isSpam,
 
                 spamScore:
-                  spamAnalysis.spamScore
+                  isSpam && labelIds.includes("SPAM")
+                    ? Math.max(spamAnalysis.spamScore, 1)
+                    : spamAnalysis.spamScore
               };
 
 
@@ -580,6 +593,10 @@ export async function generateEmailOverview(
 ) {
 
   try {
+
+    if (!openai) {
+      throw new Error("OPENAI_API_KEY is not configured.");
+    }
 
     const response =
       await openai.chat.completions.create({

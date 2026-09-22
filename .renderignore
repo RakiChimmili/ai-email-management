@@ -1,0 +1,4 @@
+backend/ml/dataset/
+dist/
+node_modules/
+*.log

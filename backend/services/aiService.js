@@ -1,12 +1,20 @@
 import OpenAI from "openai";
 import "dotenv/config";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
+
+function getOpenAIClient() {
+  if (!openai) {
+    throw new Error("OPENAI_API_KEY is not configured.");
+  }
+
+  return openai;
+}
 
 export const generateEmailOverview = async (subject, body) => {
-  const response = await openai.responses.create({
+  const response = await getOpenAIClient().responses.create({
     model: "gpt-5.6-luna",
     input: `
 You are an AI email assistant.
@@ -35,7 +43,7 @@ ${body}
 // --------------------------------------------------
 
 export const generateEmailDraft = async (prompt, tone) => {
-  const response = await openai.responses.create({
+  const response = await getOpenAIClient().responses.create({
     model: "gpt-5.6-luna",
 
     input: `

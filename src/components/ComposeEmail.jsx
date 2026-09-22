@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-const API_URL = "https://mailai-backend-usft.onrender.com";
+import { API_URL } from "../config";
 function ComposeEmail({ onClose }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");

@@ -9,10 +9,9 @@ import StatsCard from "./components/StatsCard";
 import EmailList from "./components/EmailList";
 import EmailDetails from "./components/EmailDetails";
 import LoginPage from "./components/LoginPage";
+import { API_URL } from "./config";
 
 import "./App.css";
-
-const API_URL = "https://mailai-backend-usft.onrender.com";
 
 function App() {
 

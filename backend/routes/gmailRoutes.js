@@ -13,7 +13,7 @@ import {
 } from "../controllers/gmailController.js";
 
 const router = express.Router();
-console.log("GMAIL ROUTES LOADED");
+
 
 router.get(
   "/messages",

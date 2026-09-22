@@ -7,7 +7,6 @@ import {
   Sparkles,
   LayoutDashboard
 } from "lucide-react";
-
 function Sidebar({ activeSection, onSectionChange }) {
 
   const menuItems = [

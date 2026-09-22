@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = "https://mailai-backend-usft.onrender.com";
+import { API_URL } from "../config";
 
 function EmailItem({
   email,

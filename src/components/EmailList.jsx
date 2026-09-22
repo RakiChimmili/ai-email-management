@@ -1,6 +1,10 @@
 import EmailItem from "./EmailItem";
 
-function EmailList({ emails, onEmailClick, onStarChange }) {
+function EmailList({
+  emails,
+  onEmailClick,
+  onStarChange
+}) {
 
   return (
     <section className="email-section">
