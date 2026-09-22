@@ -134,15 +134,20 @@ function getHeader(headers, name) {
 // =====================================================
 // ML SPAM PREDICTION
 // =====================================================
-function scoreSpamHeuristically(subject, body) {
-  const text = `${subject || ""} ${body || ""}`.toLowerCase();
+function scoreSpamHeuristically(sender, subject, body) {
+  const text = `${sender || ""} ${subject || ""} ${body || ""}`.toLowerCase();
   const signals = [
     { pattern: /\b(win|winner|won|prize|lottery| jackpot)\b/, weight: 0.28 },
     { pattern: /\b(free|claim|cash bonus|reward|gift card)\b/, weight: 0.2 },
+    { pattern: /\b(sale|discount|offer|deal|coupon|promotion)\b/, weight: 0.18 },
+    { pattern: /\b(newsletter|unsubscribe|marketing|special pricing)\b/, weight: 0.16 },
+    { pattern: /\b(job alert|new openings|based on your profile|hiring now)\b/, weight: 0.18 },
+    { pattern: /\b(congratulations|account deletion|courses|top institutions)\b/, weight: 0.16 },
+    { pattern: /(?:\$|usd|inr)\s?\d+|\d+\s?(?:\$|usd|inr)/, weight: 0.2 },
     { pattern: /\b(urgent|act now|limited time|expires today)\b/, weight: 0.16 },
     { pattern: /\b(click here|verify your account|confirm your identity)\b/, weight: 0.2 },
     { pattern: /\b(password|bitcoin|crypto investment|wire transfer)\b/, weight: 0.12 },
-    { pattern: /\b(unsubscribe)\b/, weight: 0.04 }
+    { pattern: /\b(noreply|no-reply|donotreply)@/, weight: 0.05 }
   ];
 
   const score = Math.min(
@@ -154,22 +159,23 @@ function scoreSpamHeuristically(subject, body) {
   );
 
   return {
-    spam: score >= 0.55,
+    spam: score >= 0.18,
     spamScore: Number(score.toFixed(2))
   };
 }
 
-async function predictSpam(subject, body) {
+async function predictSpam(sender, subject, body) {
   if (!enableSpamModel) {
-    return scoreSpamHeuristically(subject, body);
+    return scoreSpamHeuristically(sender, subject, body);
   }
 
   try {
+    const cleanSender = sender || "";
     const cleanSubject = subject || "";
-const cleanBody = body || "";
+    const cleanBody = body || "";
 
 const emailText =
-  `${cleanSubject} ${cleanBody}`.slice(0, 12000);
+  `${cleanSender} ${cleanSubject} ${cleanBody}`.slice(0, 12000);
     
 
     const scriptPath = path.join(
@@ -394,6 +400,7 @@ export async function getGmailMessages(
 
                 spamAnalysis =
                   await predictSpam(
+                    sender,
                     subject,
                     body
                   );
@@ -556,7 +563,10 @@ export async function getGmailMessages(
 
                 spamScore:
                   isGmailSpam
-                    ? Math.max(spamAnalysis.spamScore, 0.75)
+                    ? Math.min(
+                      0.99,
+                      0.55 + (spamAnalysis.spamScore * 0.45)
+                    )
                     : spamAnalysis.spamScore
               };
 
