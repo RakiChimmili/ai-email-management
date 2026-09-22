@@ -134,12 +134,34 @@ function getHeader(headers, name) {
 // =====================================================
 // ML SPAM PREDICTION
 // =====================================================
+function scoreSpamHeuristically(subject, body) {
+  const text = `${subject || ""} ${body || ""}`.toLowerCase();
+  const signals = [
+    { pattern: /\b(win|winner|won|prize|lottery| jackpot)\b/, weight: 0.28 },
+    { pattern: /\b(free|claim|cash bonus|reward|gift card)\b/, weight: 0.2 },
+    { pattern: /\b(urgent|act now|limited time|expires today)\b/, weight: 0.16 },
+    { pattern: /\b(click here|verify your account|confirm your identity)\b/, weight: 0.2 },
+    { pattern: /\b(password|bitcoin|crypto investment|wire transfer)\b/, weight: 0.12 },
+    { pattern: /\b(unsubscribe)\b/, weight: 0.04 }
+  ];
+
+  const score = Math.min(
+    0.99,
+    signals.reduce(
+      (total, signal) => total + (signal.pattern.test(text) ? signal.weight : 0),
+      0
+    )
+  );
+
+  return {
+    spam: score >= 0.55,
+    spamScore: Number(score.toFixed(2))
+  };
+}
+
 async function predictSpam(subject, body) {
   if (!enableSpamModel) {
-    return {
-      spam: false,
-      spamScore: 0
-    };
+    return scoreSpamHeuristically(subject, body);
   }
 
   try {
@@ -491,8 +513,8 @@ export async function getGmailMessages(
               // RETURN EMAIL
               // =================================================
 
-              const isSpam =
-                spamAnalysis.spam || labelIds.includes("SPAM");
+              const isGmailSpam = labelIds.includes("SPAM");
+              const isSpam = spamAnalysis.spam || isGmailSpam;
 
               return {
 
@@ -533,8 +555,8 @@ export async function getGmailMessages(
                   isSpam,
 
                 spamScore:
-                  isSpam && labelIds.includes("SPAM")
-                    ? Math.max(spamAnalysis.spamScore, 1)
+                  isGmailSpam
+                    ? Math.max(spamAnalysis.spamScore, 0.75)
                     : spamAnalysis.spamScore
               };
 
