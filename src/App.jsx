@@ -30,6 +30,8 @@ function App() {
     useState(null);
 
   const [emails, setEmails] = useState([]);
+  const [emailsLoading, setEmailsLoading] = useState(false);
+  const [emailRefreshKey, setEmailRefreshKey] = useState(0);
 
   // Search
   const [searchText, setSearchText] = useState("");
@@ -124,6 +126,10 @@ function App() {
 
     if (activeSection === "Dashboard") return;
 
+    const controller = new AbortController();
+
+    setEmailsLoading(true);
+
     axios
       .get(
         `${API_URL}/api/gmail/messages`,
@@ -133,7 +139,8 @@ function App() {
             search: searchText
           },
 
-          withCredentials: true
+          withCredentials: true,
+          signal: controller.signal
         }
       )
 
@@ -145,19 +152,30 @@ function App() {
 
       .catch((error) => {
 
+        if (axios.isCancel(error)) return;
+
         console.error(
           "Error fetching Gmail messages:",
           error
         );
 
-        setEmails([]);
+      })
+
+      .finally(() => {
+
+        if (!controller.signal.aborted) {
+          setEmailsLoading(false);
+        }
 
       });
+
+    return () => controller.abort();
 
   }, [
     loggedIn,
     activeSection,
-    searchText
+    searchText,
+    emailRefreshKey
   ]);
 
 
@@ -264,6 +282,11 @@ function App() {
 
   };
 
+  const handleEmailBack = () => {
+    setSelectedEmail(null);
+    setEmailRefreshKey((key) => key + 1);
+  };
+
 
   // ================================
   // UPDATE STAR
@@ -313,9 +336,7 @@ function App() {
 
           <EmailDetails
   email={selectedEmail}
-  onBack={() =>
-    setSelectedEmail(null)
-  }
+  onBack={handleEmailBack}
   onEmailRead={(emailId) => {
 
     setEmails((currentEmails) =>
@@ -438,6 +459,7 @@ function App() {
 
             <EmailList
               emails={filteredEmails}
+              loading={emailsLoading}
               onEmailClick={
                 setSelectedEmail
               }

@@ -2,6 +2,7 @@ import EmailItem from "./EmailItem";
 
 function EmailList({
   emails,
+  loading,
   onEmailClick,
   onStarChange
 }) {
@@ -11,7 +12,9 @@ function EmailList({
 
       <h3>Recent Emails</h3>
 
-      {emails.length === 0 ? (
+      {loading ? (
+        <p>Loading emails...</p>
+      ) : emails.length === 0 ? (
 
         <p>No emails in this folder.</p>
 
