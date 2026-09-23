@@ -5,6 +5,8 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
+const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+
 function getOpenAIClient() {
   if (!openai) {
     throw new Error("OPENAI_API_KEY is not configured.");
@@ -15,7 +17,7 @@ function getOpenAIClient() {
 
 export const generateEmailOverview = async (subject, body) => {
   const response = await getOpenAIClient().responses.create({
-    model: "gpt-5.6-luna",
+    model,
     input: `
 You are an AI email assistant.
 
@@ -44,7 +46,7 @@ ${body}
 
 export const generateEmailDraft = async (prompt, tone) => {
   const response = await getOpenAIClient().responses.create({
-    model: "gpt-5.6-luna",
+    model,
 
     input: `
 You are a professional AI email writing assistant.

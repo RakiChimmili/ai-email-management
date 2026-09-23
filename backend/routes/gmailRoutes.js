@@ -24,11 +24,13 @@ router.get(
   "/dashboard-stats",
   getGmailDashboardStatsController
 );
+  generateGmailDraft,
 
 router.post(
   "/:id/overview",
   getGmailEmailOverview
 );
+router.post("/ai-write", generateGmailDraft);
 router.post("/send", sendGmailMessageController);
 router.patch(
   "/:id/star",

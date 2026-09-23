@@ -9,7 +9,33 @@ import {
   sendGmailMessage
 } from "../services/gmailService.js";
 import { createGmailClient } from "../services/googleService.js";
-import { generateEmailOverview } from "../services/aiService.js";
+import {
+  generateEmailOverview,
+  generateEmailDraft
+} from "../services/aiService.js";
+
+export async function generateGmailDraft(req, res) {
+  try {
+    const { prompt, tone } = req.body;
+
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({
+        message: "A description of the email is required."
+      });
+    }
+
+    const draft = await generateEmailDraft(prompt.trim(), tone);
+
+    res.json(draft);
+  } catch (error) {
+    console.error("AI email writer error:", error);
+
+    res.status(500).json({
+      message: "Failed to generate email."
+    });
+  }
+}
+
 export async function sendGmailMessageController(req, res) {
    console.log("SEND CONTROLLER REACHED");
   try {
