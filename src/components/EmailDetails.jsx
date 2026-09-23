@@ -100,7 +100,8 @@ function EmailDetails({
       );
 
       setError(
-        "Failed to generate AI overview."
+        error.response?.data?.message ||
+        "AI overview is unavailable. Please try again."
       );
 
     } finally {
