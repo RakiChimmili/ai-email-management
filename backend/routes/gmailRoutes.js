@@ -3,6 +3,7 @@ import express from "express";
 import {
   getGmailMessagesController,
   getGmailEmailOverview,
+  generateGmailDraft,
   toggleStarController,
   archiveGmailMessage,
   moveGmailToInbox,
@@ -24,7 +25,6 @@ router.get(
   "/dashboard-stats",
   getGmailDashboardStatsController
 );
-  generateGmailDraft,
 
 router.post(
   "/:id/overview",
