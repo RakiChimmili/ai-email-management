@@ -31,7 +31,8 @@ export async function generateGmailDraft(req, res) {
     console.error("AI email writer error:", error);
 
     res.status(500).json({
-      message: "Failed to generate email."
+      message: "Failed to generate email.",
+      code: error?.code || "AI_PROVIDER_ERROR"
     });
   }
 }
@@ -182,7 +183,8 @@ export async function getGmailEmailOverview(req, res) {
     console.error("Gmail AI Overview error:", error);
 
     res.status(500).json({
-      message: "Failed to generate AI overview."
+      message: "Failed to generate AI overview.",
+      code: error?.code || "AI_PROVIDER_ERROR"
     });
   }
 }

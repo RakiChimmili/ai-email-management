@@ -5,7 +5,8 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const defaultModel = "gpt-4o-mini";
+const model = process.env.OPENAI_MODEL?.trim() || defaultModel;
 
 function getOpenAIClient() {
   if (!openai) {
@@ -15,10 +16,34 @@ function getOpenAIClient() {
   return openai;
 }
 
+async function createResponse(input) {
+  const client = getOpenAIClient();
+
+  try {
+    return await client.responses.create({
+      model,
+      input
+    });
+  } catch (error) {
+    const isModelError = error?.status === 400 || error?.status === 404;
+
+    if (!isModelError || model === defaultModel) {
+      throw error;
+    }
+
+    console.warn(
+      `OPENAI_MODEL "${model}" was rejected; retrying with "${defaultModel}".`
+    );
+
+    return client.responses.create({
+      model: defaultModel,
+      input
+    });
+  }
+}
+
 export const generateEmailOverview = async (subject, body) => {
-  const response = await getOpenAIClient().responses.create({
-    model,
-    input: `
+  const response = await createResponse(`
 You are an AI email assistant.
 
 Summarize the following email in 1-3 short sentences.
@@ -35,20 +60,16 @@ ${subject}
 
 Email body:
 ${body}
-`
-  });
+`);
 
-  return response.output_text;
+  return response.output_text?.trim() || "No overview was generated.";
 };
 // --------------------------------------------------
 // AI EMAIL WRITER
 // --------------------------------------------------
 
 export const generateEmailDraft = async (prompt, tone) => {
-  const response = await getOpenAIClient().responses.create({
-    model,
-
-    input: `
+  const response = await createResponse(`
 You are a professional AI email writing assistant.
 
 Create a complete email based on the user's request.
@@ -78,10 +99,9 @@ SUBJECT:
 
 BODY:
 <complete email body>
-`
-  });
+`);
 
-  const output = response.output_text;
+  const output = response.output_text?.trim() || "";
 
   const subjectMatch = output.match(
     /SUBJECT:\s*([\s\S]*?)\s*BODY:/

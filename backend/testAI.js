@@ -8,7 +8,7 @@ const openai = new OpenAI({
 async function testAI() {
   try {
     const response = await openai.responses.create({
-      model: "gpt-5.6-luna",
+      model: "gpt-4o-mini",
       input: "Explain what an email summary is in one sentence."
     });
 
