@@ -37,7 +37,10 @@ function AIEmailWriter() {
 
     } catch (error) {
       console.error("AI Writer error:", error);
-      setError("Failed to generate email.");
+      setError(
+        error.response?.data?.message ||
+        "AI writer is unavailable. Please try again after the backend is redeployed."
+      );
     } finally {
       setLoading(false);
     }
