@@ -55,7 +55,8 @@ req.session.save((err) => {
     return res.status(500).send("Failed to save login session.");
   }
 
-  res.redirect(frontendUrl);
+  const loginRedirect = `${frontendUrl}${frontendUrl.includes("?") ? "&" : "?"}login=success`;
+  res.redirect(loginRedirect);
 });
 
   } catch (error) {

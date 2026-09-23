@@ -13,6 +13,8 @@ import { API_URL } from "./config";
 
 import "./App.css";
 
+const TAB_SESSION_KEY = "mailai-tab-session";
+
 function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -46,6 +48,26 @@ function App() {
   // ================================
 
   useEffect(() => {
+    const loginCompleted =
+      new URLSearchParams(window.location.search).get("login") ===
+      "success";
+
+    if (loginCompleted) {
+      sessionStorage.setItem(TAB_SESSION_KEY, "active");
+      window.history.replaceState({}, document.title, window.location.pathname);
+      checkLogin();
+      return;
+    }
+
+    if (!sessionStorage.getItem(TAB_SESSION_KEY)) {
+      sessionStorage.setItem(TAB_SESSION_KEY, "active");
+
+      axios
+        .post(`${API_URL}/auth/logout`, {}, { withCredentials: true })
+        .finally(checkLogin);
+      return;
+    }
+
     checkLogin();
   }, []);
 
