@@ -30,8 +30,18 @@ export async function generateGmailDraft(req, res) {
   } catch (error) {
     console.error("AI email writer error:", error);
 
+    let message = "AI provider request failed.";
+
+    if (error?.message === "OPENAI_API_KEY is not configured.") {
+      message = "AI service is not configured on the backend.";
+    } else if (error?.status === 401) {
+      message = "The backend OpenAI API key is invalid.";
+    } else if (error?.status === 429) {
+      message = "The AI service quota has been exceeded.";
+    }
+
     res.status(500).json({
-      message: "Failed to generate email.",
+      message,
       code: error?.code || "AI_PROVIDER_ERROR"
     });
   }

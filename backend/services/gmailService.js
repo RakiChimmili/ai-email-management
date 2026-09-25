@@ -294,15 +294,21 @@ export async function getGmailMessages(
     // GET MESSAGE LIST
     // =================================================
 
-    const listResponse =
-      await gmail.users.messages.list({
-        userId: "me",
-        q: query,
-        maxResults: folder === "Spam" ? 100 : 20
-      });
+    const messages = [];
+    let pageToken;
 
-    const messages =
-      listResponse.data.messages || [];
+    do {
+      const listResponse =
+        await gmail.users.messages.list({
+          userId: "me",
+          q: query,
+          maxResults: 100,
+          ...(pageToken ? { pageToken } : {})
+        });
+
+      messages.push(...(listResponse.data.messages || []));
+      pageToken = listResponse.data.nextPageToken;
+    } while (pageToken);
 
 
     console.log(
